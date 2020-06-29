@@ -26,4 +26,9 @@ class Dinosaur(object):
         self.currentImage = self.dinoJump[0]
 
     def down(self):
-        print("Abaixado")
+        self.currentImage = self.dinoDown[self.frame]
+
+        if self.frame:
+            self.frame = 0
+        else:
+            self.frame = 1

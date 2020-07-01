@@ -4,6 +4,7 @@ import os
 import Backend.dinosaur as objDinosaur
 import Backend.cactu as objCactu
 import Backend.bird as objBird
+import Backend.background as objBackground
 
 DIC_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -15,19 +16,24 @@ DINOSAUR_DIMENSIONS = [[75, 0, 90, 96], [1338, 0, 88, 96], [1426, 0, 88, 96], [1
 
 PTERODACTYL_DIMENSIONS = [[259, 0, 93, 84], [352, 0, 92, 84]]
 
+BACKGROUND_DIMENSIONS = [[2, 104, 2400, 26]]
+
 def loadImages(imageName):
     try:
         imageAll = pg.image.load(DIC_PATH + imageName)
         imageDino = [imageAll.subsurface(dimension) for dimension in DINOSAUR_DIMENSIONS]
         imagesBird = [imageAll.subsurface(dimension) for dimension in PTERODACTYL_DIMENSIONS]
         imagesCactu = [imageAll.subsurface(dimension) for dimension in CACTUS_DIMENSIONS]
+        imageBackground = [imageAll.subsurface(dimension) for dimension in BACKGROUND_DIMENSIONS]
     except pg.error:
         print("Cannot load image: ", imageName)
         raise SystemExit
-    return imageDino, imagesBird, imagesCactu
+    return imageDino, imagesBird, imagesCactu, imageBackground
     
-def animation(screen, TRex, bird, cactu):
+def animation(screen, TRex, bird, cactu, background1, background2):
     screen.fill((255, 255, 255)) # preenche a tela com a cor branca
+    screen.blit(background1.currentImage, [background1.x, background1.y])
+    screen.blit(background2.currentImage, [background2.x, background2.y])
     screen.blit(TRex.currentImage, [TRex.x, TRex.y])
     screen.blit(bird.currentImage, [bird.x, bird.y])
     screen.blit(cactu.currentImage, [cactu.x, cactu.y])
@@ -41,12 +47,14 @@ def render():
     screen = pg.display.set_mode((800, 600)) # largura / altura
     pg.display.set_caption("T-Rex Running")
 
-    imageDino, imagesBird, imagesCactu = loadImages("/assets/imageGeneral.png")
+    imageDino, imagesBird, imagesCactu, imageBackground = loadImages("/assets/imageGeneral.png")
     # imageSmall = pg.transform.scale(image, [72, 72])
 
     TRex = objDinosaur.Dinosaur(50, 350, imageDino)
     bird = objBird.Bird(300, 350, imagesBird)
     cactu = objCactu.Cactu(450, 350, imagesCactu)
+    background1 = objBackground.Background(0, 420, imageBackground)
+    background2 = objBackground.Background(2400, 420, imageBackground)
 
     isJump = False
     isDown = False
@@ -59,7 +67,7 @@ def render():
     while close != True:
         pg.time.delay(20)
 
-        animation(screen, TRex, bird, cactu)
+        animation(screen, TRex, bird, cactu, background1, background2)
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -108,6 +116,9 @@ def render():
 
         # cactu.move()
         # cactu.changeCurrentImage()
+
+        background1.move()
+        background2.move()
 
     pg.quit()
 

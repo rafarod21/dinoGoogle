@@ -1,7 +1,7 @@
 class Dinosaur(object):
-    def __init__(self, x, y, images):
+    def __init__(self, x, images):
         self.x = x
-        self.y = y
+        self.y = 0
         self.images = images
 
         self.frame = 0
@@ -12,6 +12,19 @@ class Dinosaur(object):
         self.dinoDead = [self.images[5]]
 
         self.currentImage = self.dinoStop[self.frame]
+
+    def calculateInitialCoordinates(self, background):
+        dimensionsDino = self.currentImage.get_rect()
+        dimensionsBackground = background.currentImage.get_rect()
+
+        self.y = background.y + dimensionsBackground[3] - dimensionsDino[3] + 6
+
+    def calculateCoordinates(self, background):
+        dimensionsDino = self.currentImage.get_rect()
+        dimensionsBackground = background.currentImage.get_rect()
+
+        self.y = background.y + dimensionsBackground[3] - dimensionsDino[3]
+        # self.x = background.x
 
     def walk(self):
         self.currentImage = self.dinoWalk[self.frame]

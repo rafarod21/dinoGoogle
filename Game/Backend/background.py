@@ -2,7 +2,7 @@ class Background(object):
     def __init__(self, x, y, images):
         self.x = x
         self.y = y
-        self.speed = 20
+        self.speed = 5
         self.images = images
 
         self.frame = 0

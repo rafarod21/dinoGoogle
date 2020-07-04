@@ -8,27 +8,34 @@ import Backend.background as objBackground
 
 DIC_PATH = os.path.abspath(os.path.dirname(__file__))
 
-CACTUS_DIMENSIONS = [[443, 0, 37, 72], [480, 0, 68, 72], [548, 0, 102, 72],
-                     [651, 0, 51, 102], [702, 0, 102, 102], [803, 0, 150, 102]]
+CACTUS_DIMENSIONS = [[446, 0, 34, 72], [480, 0, 68, 72], [548, 0, 102, 72],
+                     [652, 0, 50, 102], [702, 0, 102, 102], [802, 0, 150, 102]]
 
-DINOSAUR_DIMENSIONS = [[75, 0, 90, 96], [1338, 0, 88, 96], [1426, 0, 88, 96], [1514, 0, 88, 96], [1602, 0, 88, 96],
-                       [1690, 0, 88, 96], [1778, 0, 88, 96], [1866, 0, 118, 96], [1984, 0, 120, 96]]
+DINOSAUR_DIMENSIONS = [[76, 6, 90, 96], [1338, 2, 88, 94], [1426, 2, 88, 94], [1514, 2, 88, 94], [1602, 2, 88, 94],
+                       [1690, 2, 88, 94], [1782, 6, 80, 86], [1866, 36, 118, 60], [1984, 36, 118, 60]]
 
-PTERODACTYL_DIMENSIONS = [[259, 0, 93, 84], [352, 0, 92, 84]]
+PTERODACTYL_DIMENSIONS = [[260, 0, 93, 84], [352, 0, 92, 84]]
 
-BACKGROUND_DIMENSIONS = [[2, 104, 2400, 26]]
+BACKGROUND_DIMENSIONS = [[2, 104, 2400, 24]]
 
 def loadImages(imageName):
     try:
         imageAll = pg.image.load(DIC_PATH + imageName)
-        imageDino = [imageAll.subsurface(dimension) for dimension in DINOSAUR_DIMENSIONS]
+        imagesDino = [imageAll.subsurface(dimension) for dimension in DINOSAUR_DIMENSIONS]
         imagesBird = [imageAll.subsurface(dimension) for dimension in PTERODACTYL_DIMENSIONS]
         imagesCactu = [imageAll.subsurface(dimension) for dimension in CACTUS_DIMENSIONS]
         imageBackground = [imageAll.subsurface(dimension) for dimension in BACKGROUND_DIMENSIONS]
     except pg.error:
         print("Cannot load image: ", imageName)
         raise SystemExit
-    return imageDino, imagesBird, imagesCactu, imageBackground
+    return imagesDino, imagesBird, imagesCactu, imageBackground
+
+def getImagesDimensions(imagesDino, imagesBird, imagesCactu, imageBackground):
+    dimensionsDino = [image.get_rect() for image in imagesDino]
+    dimensionsBird = [image.get_rect() for image in imagesBird]
+    dimensionsCactu = [image.get_rect() for image in imagesCactu]
+    dimensionsBackground = [image.get_rect() for image in imageBackground]
+    return dimensionsDino, dimensionsBird, dimensionsCactu, dimensionsBackground
     
 def animation(screen, TRex, bird, cactu, background1, background2):
     screen.fill((255, 255, 255)) # preenche a tela com a cor branca
@@ -47,12 +54,13 @@ def render():
     screen = pg.display.set_mode((800, 600)) # largura / altura
     pg.display.set_caption("T-Rex Running")
 
-    imageDino, imagesBird, imagesCactu, imageBackground = loadImages("/assets/imageGeneral.png")
+    imagesDino, imagesBird, imagesCactu, imageBackground = loadImages("/assets/imageGeneral.png")
+    dimensionsDino, dimensionsBird, dimensionsCactu, dimensionsBackground = getImagesDimensions(imagesDino, imagesBird, imagesCactu, imageBackground)
     # imageSmall = pg.transform.scale(image, [72, 72])
 
-    TRex = objDinosaur.Dinosaur(50, 350, imageDino)
-    bird = objBird.Bird(300, 350, imagesBird)
-    cactu = objCactu.Cactu(450, 350, imagesCactu)
+    TRex = objDinosaur.Dinosaur(50, imagesDino)
+    bird = objBird.Bird(300, imagesBird)
+    cactu = objCactu.Cactu(imagesCactu)
     background1 = objBackground.Background(0, 420, imageBackground)
     background2 = objBackground.Background(2400, 420, imageBackground)
 
@@ -64,7 +72,12 @@ def render():
     countFrameBird = 0
     # countFrameCactu = 0
 
+    # TRex.calculateInitialCoordinates(background1)
+    TRex.calculateCoordinates(background1)
+
     while close != True:
+        cactu.calculateCoordinates(background1)
+        bird.calculateCoordinates(background1)
         pg.time.delay(20)
 
         animation(screen, TRex, bird, cactu, background1, background2)
@@ -100,25 +113,27 @@ def render():
                 TRex.down()
                 countFrameDino = 0
             countFrameDino += 1
+            TRex.calculateCoordinates(background1)
         else:
             # timeout
             if countFrameDino > 3:
                 TRex.walk()
                 countFrameDino = 0
             countFrameDino += 1
+            TRex.calculateCoordinates(background1)
 
         # timeout
         # bird.move()
         if countFrameBird > 15:
+            # cactu.changeCurrentImage()
             bird.fly()
             countFrameBird = 0
         countFrameBird += 1
 
         # cactu.move()
-        # cactu.changeCurrentImage()
 
-        background1.move()
-        background2.move()
+        # background1.move()
+        # background2.move()
 
     pg.quit()
 

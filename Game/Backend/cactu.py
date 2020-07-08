@@ -25,6 +25,5 @@ class Cactu(object):
     
     def changeCurrentImage(self):
         image = random.randint(0, 5)
-        print(image)
         self.currentImage = self.images[image]
         self.dimensionsCactu = self.currentImage.get_rect()

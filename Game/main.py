@@ -40,13 +40,12 @@ def getImagesDimensions(imagesDino, imagesBird, imagesCactu, imageBackground):
     dimensionsBackground = [image.get_rect() for image in imageBackground]
     return dimensionsDino, dimensionsBird, dimensionsCactu, dimensionsBackground
     
-def animation(screen, TRex, bird1, bird2, cactu1, cactu2, background1, background2):
+def animation(screen, TRex, bird, cactu1, cactu2, background1, background2):
     screen.fill((255, 255, 255)) # preenche a tela com a cor branca
     screen.blit(background1.currentImage, [background1.x, background1.y])
     screen.blit(background2.currentImage, [background2.x, background2.y])
     screen.blit(TRex.currentImage, [TRex.x, TRex.y])
-    screen.blit(bird1.currentImage, [bird1.x, bird2.y])
-    screen.blit(bird2.currentImage, [bird2.x, bird1.y])
+    screen.blit(bird.currentImage, [bird.x, bird.y])
     screen.blit(cactu1.currentImage, [cactu1.x, cactu1.y])
     screen.blit(cactu2.currentImage, [cactu2.x, cactu2.y])
     pg.display.update()
@@ -61,23 +60,22 @@ def randomCactu(cactu1, cactu2, background1):
         cactu1.calculateCoordinates(background1)
         cactu1.x = SCREEN_DIMENSIONS[0]-1
 
-def randomBird(bird1, bird2, background1):
-    if bird1.x < SCREEN_DIMENSIONS[0]:
-        bird2.calculateCoordinates(background1)
-        bird2.x = SCREEN_DIMENSIONS[0]-1
-    else:
-        bird1.calculateCoordinates(background1)
-        bird1.x = SCREEN_DIMENSIONS[0]-1
+def randomBird(bird, background1):
+    bird.calculateCoordinates(background1)
+    bird.x = SCREEN_DIMENSIONS[0]-1
 
-def randomObstacle(gameTime, bird1, bird2, cactu1, cactu2, background1):
-    if gameTime < 10:
+def randomObstacle(gameTime, bird, cactu1, cactu2, background1):
+    if gameTime < 1:
         randomCactu(cactu1, cactu2, background1)
     else:
-        choice = random.randint(0, 2)
-        if choice:
-            randomCactu(cactu1, cactu2, background1)
+        if bird.x >= -bird.dimensionsBird[2] and bird.x <= SCREEN_DIMENSIONS[0]:
+            return
         else:
-            randomBird(bird1, bird2, background1)
+            choice = random.randint(0, 2)
+            if choice:
+                randomCactu(cactu1, cactu2, background1)
+            else:
+                randomBird(bird, background1)
 
 def render():
     pg.init()
@@ -97,8 +95,7 @@ def render():
     # imageSmall = pg.transform.scale(image, [72, 72])
 
     TRex = objDinosaur.Dinosaur(50, imagesDino)
-    bird1 = objBird.Bird(SCREEN_DIMENSIONS[0]+1, imagesBird)
-    bird2 = objBird.Bird(SCREEN_DIMENSIONS[0]+1, imagesBird)
+    bird = objBird.Bird(SCREEN_DIMENSIONS[0]+1, imagesBird)
     cactu1 = objCactu.Cactu(SCREEN_DIMENSIONS[0]+1, imagesCactu)
     cactu2 = objCactu.Cactu(SCREEN_DIMENSIONS[0]+1, imagesCactu)
     background1 = objBackground.Background(0, 420, imageBackground)
@@ -109,8 +106,7 @@ def render():
     jumpCount = 10
 
     countFrameDino = 0
-    countFrameBird1 = 0
-    countFrameBird2 = 0
+    countFrameBird = 0
 
     # TRex.calculateInitialCoordinates(background1)
     TRex.calculateCoordinates(background1)
@@ -120,11 +116,11 @@ def render():
         generatePossibleObstacle += 0.1
 
         if generatePossibleObstacle >= 10:
-            randomObstacle(gameTime, bird1, bird2, cactu1, cactu2, background1)
+            randomObstacle(gameTime, bird, cactu1, cactu2, background1)
             generatePossibleObstacle = 0
         pg.time.delay(20)
 
-        animation(screen, TRex, bird1, bird2, cactu1, cactu2, background1, background2)
+        animation(screen, TRex, bird, cactu1, cactu2, background1, background2)
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -167,22 +163,13 @@ def render():
             TRex.calculateCoordinates(background1)
 
         # timeout
-        if bird1.x < SCREEN_DIMENSIONS[0]:
-            bird1.move(gameSpeed)
-            if countFrameBird1 > 15:
+        if bird.x < SCREEN_DIMENSIONS[0]:
+            bird.move(gameSpeed)
+            if countFrameBird > 15:
                 # cactu1.changeCurrentImage()
-                bird1.fly()
-                countFrameBird1 = 0
-            countFrameBird1 += 1
-
-        # timeout
-        if bird2.x < SCREEN_DIMENSIONS[0]:
-            bird2.move(gameSpeed)
-            if countFrameBird2 > 15:
-                # cactu1.changeCurrentImage()
-                bird2.fly()
-                countFrameBird2 = 0
-            countFrameBird2 += 1
+                bird.fly()
+                countFrameBird = 0
+            countFrameBird += 1
 
         if cactu1.x < SCREEN_DIMENSIONS[0]:
             cactu1.move(gameSpeed)

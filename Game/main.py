@@ -9,7 +9,12 @@ import Backend.background as objBackground
 
 DIC_PATH = os.path.abspath(os.path.dirname(__file__))
 
-SCREEN_DIMENSIONS = [800, 600]
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,30)
+
+pg.init()
+SCREEN_DIMENSIONS = [pg.display.Info().current_w, pg.display.Info().current_h-70]
+# SCREEN_DIMENSIONS = [1200, 600]
+# SCREEN_DIMENSIONS = [pg.display.Info().current_w, pg.display.Info().current_h]
 
 CACTUS_DIMENSIONS = [[446, 0, 34, 72], [480, 0, 68, 72], [548, 0, 102, 72],
                      [652, 0, 50, 102], [702, 0, 102, 102], [802, 0, 150, 102]]
@@ -78,8 +83,6 @@ def randomObstacle(gameTime, bird, cactu1, cactu2, background1):
                 randomBird(bird, background1)
 
 def render():
-    pg.init()
-
     close = False
 
     gameSpeed = 5

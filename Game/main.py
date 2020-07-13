@@ -85,7 +85,7 @@ def randomObstacle(gameTime, bird, cactu1, cactu2, background1):
 def render():
     close = False
 
-    gameSpeed = 5
+    gameSpeed = 15
     gameTime = 0
 
     generatePossibleObstacle = 0 # até 5

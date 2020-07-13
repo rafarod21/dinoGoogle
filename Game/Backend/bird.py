@@ -1,3 +1,5 @@
+import random
+
 class Bird(object):
     def __init__(self, x, images):
         self.xInitial = x
@@ -11,8 +13,14 @@ class Bird(object):
 
     def calculateCoordinates(self, background):
         dimensionsBackground = background.currentImage.get_rect()
-
+        position = random.randint(0, 3)
         self.y = background.y + dimensionsBackground[3] - self.dimensionsBird[3]
+
+        if position == 1:
+            self.y -= 100
+        elif position == 2:
+            self.y -= 200
+
         # self.x = background.x
 
     def move(self, speed):

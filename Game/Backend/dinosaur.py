@@ -35,7 +35,7 @@ class Dinosaur(object):
             self.frame = 1
 
     def jump(self, jumpCount):
-        self.y -= (jumpCount * abs(jumpCount)) * 0.4
+        self.y -= (jumpCount * abs(jumpCount)) * 0.6
         self.currentImage = self.dinoJump[0]
 
     def down(self):

@@ -70,22 +70,23 @@ def randomBird(bird, background1):
     bird.x = SCREEN_DIMENSIONS[0]-1
 
 def randomObstacle(gameTime, bird, cactu1, cactu2, background1):
-    if gameTime < 1:
-        randomCactu(cactu1, cactu2, background1)
-    else:
-        if bird.x >= -bird.dimensionsBird[2] and bird.x <= SCREEN_DIMENSIONS[0]:
-            return
-        else:
-            choice = random.randint(0, 2)
-            if choice:
-                randomCactu(cactu1, cactu2, background1)
-            else:
-                randomBird(bird, background1)
+    randomCactu(cactu1, cactu2, background1)
+    # if gameTime < 1:
+    #     randomCactu(cactu1, cactu2, background1)
+    # else:
+    #     if bird.x >= -bird.dimensionsBird[2] and bird.x <= SCREEN_DIMENSIONS[0]:
+    #         return
+    #     else:
+    #         choice = random.randint(0, 2)
+    #         if choice:
+    #             randomCactu(cactu1, cactu2, background1)
+    #         else:
+    #             randomBird(bird, background1)
 
 def render():
     close = False
 
-    gameSpeed = 15
+    gameSpeed = 4
     gameTime = 0
 
     generatePossibleObstacle = 0 # até 5
@@ -106,7 +107,8 @@ def render():
 
     isJump = False
     isDown = False
-    jumpCount = 10
+    jumpCountMax = 40
+    jumpCount = jumpCountMax
 
     countFrameDino = 0
     countFrameBird = 0
@@ -118,10 +120,10 @@ def render():
         gameTime += 0.01
         generatePossibleObstacle += 0.1
 
-        if generatePossibleObstacle >= 10:
+        if generatePossibleObstacle >= 40:
             randomObstacle(gameTime, bird, cactu1, cactu2, background1)
             generatePossibleObstacle = 0
-        pg.time.delay(20)
+        pg.time.delay(5)
 
         animation(screen, TRex, bird, cactu1, cactu2, background1, background2)
 
@@ -143,11 +145,11 @@ def render():
             isDown = False
 
         if isJump:
-            if jumpCount >= -10:
+            if jumpCount >= -jumpCountMax:
                 TRex.jump(jumpCount)
                 jumpCount -= 1
-            else: 
-                jumpCount = 10
+            else:
+                jumpCount = jumpCountMax
                 isJump = False
                 TRex.walk()
         elif isDown:
@@ -159,7 +161,7 @@ def render():
             TRex.calculateCoordinates(background1)
         else:
             # timeout
-            if countFrameDino > 3:
+            if countFrameDino > 10:
                 TRex.walk()
                 countFrameDino = 0
             countFrameDino += 1

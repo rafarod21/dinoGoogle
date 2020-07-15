@@ -18,12 +18,14 @@ class Dinosaur(object):
         dimensionsBackground = background.currentImage.get_rect()
 
         self.y = background.y + dimensionsBackground[3] - dimensionsDino[3] + 6
+        self.yInitial = self.y
 
     def calculateCoordinates(self, background):
         dimensionsDino = self.currentImage.get_rect()
         dimensionsBackground = background.currentImage.get_rect()
 
         self.y = background.y + dimensionsBackground[3] - dimensionsDino[3]
+        self.yInitial = self.y
         # self.x = background.x
 
     def walk(self):
@@ -35,9 +37,9 @@ class Dinosaur(object):
             self.frame = 1
 
     def jump(self, jumpCount):
-        self.y -= (jumpCount * abs(jumpCount)) * 0.6
+        self.y -= jumpCount * 0.3
         self.currentImage = self.dinoJump[0]
-
+        
     def down(self):
         self.currentImage = self.dinoDown[self.frame]
 

@@ -1,6 +1,6 @@
 class Dinosaur(object):
-    def __init__(self, x, images):
-        self.x = x
+    def __init__(self, images, gameSize):
+        self.x = gameSize[0] + 50
         self.y = 0
         self.images = images
 

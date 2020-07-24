@@ -1,0 +1,13 @@
+Pesquisar sobre colisões de imagens pixel a pixel (imagens sem fundo) em python
+
+Redimensionar as imagens de acordo com as dimensões da tela
+
+Recalcular coordenadas de acordo com as dimensões da tela
+
+Recalcular pulo de acordo com as dimensões da tela
+
+Tornar mais aleatório o surgimento de obstáculos
+
+Refazer cálculos para surgimento de obstáculos
+
+Aumentar velocidade gradativamente

@@ -13,8 +13,9 @@ os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (0,30)
 
 pg.init()
 SCREEN_DIMENSIONS = [pg.display.Info().current_w, pg.display.Info().current_h-70]
-# SCREEN_DIMENSIONS = [1200, 600]
+# SCREEN_DIMENSIONS = [800, 600]
 # SCREEN_DIMENSIONS = [pg.display.Info().current_w, pg.display.Info().current_h]
+GAME_SIZE = [SCREEN_DIMENSIONS[0]/5, SCREEN_DIMENSIONS[1]/50, SCREEN_DIMENSIONS[0]/5 * 3, SCREEN_DIMENSIONS[1]/2]
 
 CACTUS_DIMENSIONS = [[446, 0, 34, 72], [480, 0, 68, 72], [548, 0, 102, 72],
                      [652, 0, 50, 102], [702, 0, 102, 102], [802, 0, 150, 102]]
@@ -44,7 +45,7 @@ def getImagesDimensions(imagesDino, imagesBird, imagesCactu, imageBackground):
     dimensionsCactu = [image.get_rect() for image in imagesCactu]
     dimensionsBackground = [image.get_rect() for image in imageBackground]
     return dimensionsDino, dimensionsBird, dimensionsCactu, dimensionsBackground
-    
+
 def animation(screen, TRex, bird, cactu1, cactu2, background1, background2):
     screen.fill((255, 255, 255)) # preenche a tela com a cor branca
     screen.blit(background1.currentImage, [background1.x, background1.y])
@@ -53,17 +54,21 @@ def animation(screen, TRex, bird, cactu1, cactu2, background1, background2):
     screen.blit(bird.currentImage, [bird.x, bird.y])
     screen.blit(cactu1.currentImage, [cactu1.x, cactu1.y])
     screen.blit(cactu2.currentImage, [cactu2.x, cactu2.y])
+    pg.draw.rect(screen, (0, 0, 0), GAME_SIZE, 1)
+
+    pg.draw.rect(screen, (255, 255, 255), [0, 0, GAME_SIZE[0], GAME_SIZE[3]])
+    pg.draw.rect(screen, (255, 255, 255), [GAME_SIZE[0]+GAME_SIZE[2], 0, SCREEN_DIMENSIONS[0], GAME_SIZE[1]+GAME_SIZE[3]])
     pg.display.update()
 
 def randomCactu(cactu1, cactu2, background1):
-    if cactu1.x < SCREEN_DIMENSIONS[0]:
-        cactu2.changeCurrentImage()
-        cactu2.calculateCoordinates(background1)
-        cactu2.x = SCREEN_DIMENSIONS[0]-1
-    else:
+    if cactu2.x < GAME_SIZE[0] + GAME_SIZE[2]:
         cactu1.changeCurrentImage()
         cactu1.calculateCoordinates(background1)
-        cactu1.x = SCREEN_DIMENSIONS[0]-1
+        cactu1.x = GAME_SIZE[0] + GAME_SIZE[2] - 1
+    else:
+        cactu2.changeCurrentImage()
+        cactu2.calculateCoordinates(background1)
+        cactu2.x = GAME_SIZE[0] + GAME_SIZE[2] - 1
 
 def randomBird(bird, background1):
     bird.calculateCoordinates(background1)
@@ -86,7 +91,7 @@ def randomObstacle(gameTime, bird, cactu1, cactu2, background1):
 def render():
     close = False
 
-    gameSpeed = 4
+    gameSpeed = 2
     gameTime = 0
 
     generatePossibleObstacle = 0 # até 5
@@ -98,12 +103,12 @@ def render():
     dimensionsDino, dimensionsBird, dimensionsCactu, dimensionsBackground = getImagesDimensions(imagesDino, imagesBird, imagesCactu, imageBackground)
     # imageSmall = pg.transform.scale(image, [72, 72])
 
-    TRex = objDinosaur.Dinosaur(50, imagesDino)
+    TRex = objDinosaur.Dinosaur(imagesDino, GAME_SIZE)
     bird = objBird.Bird(SCREEN_DIMENSIONS[0]+1, imagesBird)
-    cactu1 = objCactu.Cactu(SCREEN_DIMENSIONS[0]+1, imagesCactu)
-    cactu2 = objCactu.Cactu(SCREEN_DIMENSIONS[0]+1, imagesCactu)
-    background1 = objBackground.Background(0, 420, imageBackground)
-    background2 = objBackground.Background(2400, 420, imageBackground)
+    cactu1 = objCactu.Cactu(imagesCactu, GAME_SIZE)
+    cactu2 = objCactu.Cactu(imagesCactu, GAME_SIZE)
+    background1 = objBackground.Background(imageBackground, GAME_SIZE, 0)
+    background2 = objBackground.Background(imageBackground, GAME_SIZE, 1)
 
     isJump = False
     isDown = False
@@ -168,7 +173,7 @@ def render():
             TRex.calculateCoordinates(background1)
 
         # timeout
-        if bird.x < SCREEN_DIMENSIONS[0]:
+        if bird.x < GAME_SIZE[0] + GAME_SIZE[2]:
             bird.move(gameSpeed)
             if countFrameBird > 15:
                 # cactu1.changeCurrentImage()
@@ -176,13 +181,13 @@ def render():
                 countFrameBird = 0
             countFrameBird += 1
 
-        if cactu1.x < SCREEN_DIMENSIONS[0]:
-            cactu1.move(gameSpeed)
-        if cactu2.x < SCREEN_DIMENSIONS[0]:
-            cactu2.move(gameSpeed)
+        if cactu1.x < GAME_SIZE[0] + GAME_SIZE[2]:
+            cactu1.move(gameSpeed, GAME_SIZE)
+        if cactu2.x < GAME_SIZE[0] + GAME_SIZE[2]:
+            cactu2.move(gameSpeed, GAME_SIZE)
 
-        background1.move(gameSpeed)
-        background2.move(gameSpeed)
+        background1.move(gameSpeed, GAME_SIZE)
+        background2.move(gameSpeed, GAME_SIZE)
 
     pg.quit()
 

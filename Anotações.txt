@@ -1,3 +1,5 @@
+Organizar estruturação de pastas
+
 Pesquisar sobre colisões de imagens pixel a pixel (imagens sem fundo) em python
 
 Redimensionar as imagens de acordo com as dimensões da tela

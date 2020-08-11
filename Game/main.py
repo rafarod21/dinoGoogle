@@ -1,6 +1,7 @@
 import pygame as pg
 import os
 import random
+from pynput.keyboard import Key, Controller
 
 import Backend.dinosaur as objDinosaur
 import Backend.cactu as objCactu
@@ -89,9 +90,11 @@ def randomObstacle(gameTime, bird, cactu1, cactu2, background1):
     #             randomBird(bird, background1)
 
 def render():
+    keyboard = Controller()
+
     close = False
 
-    gameSpeed = 2
+    gameSpeed = 4
     gameTime = 0
 
     generatePossibleObstacle = 0 # até 5
@@ -101,8 +104,9 @@ def render():
 
     imagesDino, imagesBird, imagesCactu, imageBackground = loadImages("/assets/imageGeneral.png")
     dimensionsDino, dimensionsBird, dimensionsCactu, dimensionsBackground = getImagesDimensions(imagesDino, imagesBird, imagesCactu, imageBackground)
-    # imageSmall = pg.transform.scale(image, [72, 72])
+    # imagesTeste = [pg.transform.scale(image, [int(GAME_SIZE[2]/10), int(GAME_SIZE[3]/4)]) for image in imagesDino]
 
+    # TRex = objDinosaur.Dinosaur(imagesDino, GAME_SIZE)
     TRex = objDinosaur.Dinosaur(imagesDino, GAME_SIZE)
     bird = objBird.Bird(SCREEN_DIMENSIONS[0]+1, imagesBird)
     cactu1 = objCactu.Cactu(imagesCactu, GAME_SIZE)
@@ -112,7 +116,7 @@ def render():
 
     isJump = False
     isDown = False
-    jumpCountMax = 40
+    jumpCountMax = 25
     jumpCount = jumpCountMax
 
     countFrameDino = 0
@@ -126,11 +130,14 @@ def render():
         generatePossibleObstacle += 0.1
 
         if generatePossibleObstacle >= 40:
+            # keyboard.press(Key.up)
+            # keyboard.release(Key.up)
             randomObstacle(gameTime, bird, cactu1, cactu2, background1)
             generatePossibleObstacle = 0
         pg.time.delay(5)
 
-        animation(screen, TRex, bird, cactu1, cactu2, background1, background2)
+        animation(screen, TRex, bird, cactu1, cactu2, background1, background2);
+        close = TRex.colied([cactu1, cactu2]);
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -152,14 +159,14 @@ def render():
         if isJump:
             if jumpCount >= -jumpCountMax:
                 TRex.jump(jumpCount)
-                jumpCount -= 1
+                jumpCount -= 0.53
             else:
                 jumpCount = jumpCountMax
                 isJump = False
                 TRex.walk()
         elif isDown:
             # timeout
-            if countFrameDino > 3:
+            if countFrameDino > 10:
                 TRex.down()
                 countFrameDino = 0
             countFrameDino += 1
